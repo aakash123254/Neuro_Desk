@@ -41,3 +41,59 @@ with st.sidebar:
         data_path = Path("data").absolute()
         st.write(f"Data folder: {data_path}")
 
+# Main Navigation 
+PAGES = ["Home","Sources","Chat","Audio/Video","Insights","Knowledge Graph", "Settings"]
+page = st.radio("Navigate",PAGES,index=0, horizontal=True)
+
+# ----------------------------
+# Home Page: Uploads & Links
+# ----------------------------
+
+if page == "Home":
+    st.header("Upload / Import Sources")
+    st.info("Upload files (PDF/DOCX/TXT), paste article URLs, or add Youtube links. Then click Ingest to process them into the notebook")
+    uploaded_files = st.file_uploader("Upload files", accept_multiple_files=True, type=['pdf','docx','txt','md','csv'])
+    url_input = st.text_input("Or paste a website article URL to import")
+    youtub_input = st.text_input("Or paste a YouTube video URL to import transcript")
+    
+    col1, col2 = st.columns([1,1])
+    with col1:
+        if st.button("Ingestion uploaded files"):
+            if not uploaded_files:
+                st.warning("Please upload at least one file")
+            else:
+                from core.ingestion import ingest_file 
+                with st.spinner("Ingesting files....."):
+                    results = []
+                    for f in uploaded_files:
+                        save_path = Path("data/uploads") /f.name 
+                        with open(save_path,"wb") as wf:
+                            wf.write(f.read())
+                        res = ingest_file(str(save_path),notebook_id = notebook_name)
+                        results.append(res)
+                    st.success("Uploaded files queued/ingested.")
+                    st.json(results)                    
+    with col2:
+        if st.button("Ingest URL"):
+            if not url_input.strip():
+                st.warning("Paste a website URL first")
+            else:
+                from core.ingestion import ingest_url 
+                with st.spinner("Fetching and ingestiong URL....."):
+                    res = ingest_url(url_input, notebook_id=notebook_name)
+                    st.success("URL ingested")
+                    st.write(res)
+        if st.button("Ingest Youtube"):
+            if not youtube_input.strip():
+                st.warning("Paste  a Youtube URL first.")
+            else:
+                from core.ingestion import ingest_youtube
+                with st.spinner("Fetching transcript and ingesting...."):
+                    res = ingest_youtube(youtube_input, notebook_id=notebook_name)
+                    st.success("Youtube ingested.")
+                    st.write(res)
+
+# ----------------------------
+# Sources Page: Manage uploaded content
+# ----------------------------
+
