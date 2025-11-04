@@ -24,4 +24,20 @@ with st.sidebar:
     st.markdown("---")
     st.write("Gemini configuration")
     if st.button("Configure Gemini"):
-        
+        try:
+            configure_gemini()
+            st.success("Gemini configured. Ready to use.")
+        except Exception as e:
+            st.error(f"Gemini configure failed: {e}")
+    st.caption("Use the button above after setting GEMINI_API_KEY in your environment.")
+    st.markdown("---")
+    st.write("App Links")
+    st.write("- Home: Upload files & links")
+    st.write("- Sources: View uploaded content")
+    st.write("- Chat: Ask questions")
+    st.write("- Audio/Video: Generate overviews")
+    st.write("- Insights: Auto notes & knowledge graph")
+    if st.button("Open data folder"):
+        data_path = Path("data").absolute()
+        st.write(f"Data folder: {data_path}")
+
