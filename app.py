@@ -97,3 +97,17 @@ if page == "Home":
 # Sources Page: Manage uploaded content
 # ----------------------------
 
+elif page == "Sources":
+    st.header("Sources in Notebook")
+    from core import utils as core_utils 
+    sources = core_utils.list_notebook_sources(notebook_name)
+    if not sources:
+        st.info("No sources found for this notebook. Upload files on the Home page.")
+    else:
+        for s in sources:
+            st.markdown(f"**{s.get('title','untitled')}** - `{s.get('source_type')}`")
+            st.write(s.get('summary','No summary available'))
+            if st.button(f"Delete {s.get('id')}",key=f"del_{s.get('id')}"):
+                core_utils.delete_source(notebook_name,s.get('id'))
+                st.experimental_rerun()
+
