@@ -111,3 +111,51 @@ elif page == "Sources":
                 core_utils.delete_source(notebook_name,s.get('id'))
                 st.experimental_rerun()
 
+# ----------------------------
+# Chat Page: RAG conversational interface
+# ----------------------------
+
+elif page == "Chat":
+    st.header("Chat with your Notebook")
+    st.write("Ask questions and get answers grounded in uploaded sources.")
+    question = st.text_area("Your question",height=120)
+    top_k = st.slider("Context chunks (top_k)", min_value=1, max_value=8,value=4)
+    if st.button("Ask"):
+        if not question.strip():
+            st.warning("Write a question.")
+        else:
+            from core.chat_rag import answer_question 
+            with st.spinner("Retrieving context and asking Gemini..."):
+                answer = answer_question(question,notebook_id=notebook_name,top_k=top_k)
+            st.subheader("Answer")
+            st.write(answer.get("answer","No answer returned"))
+            st.subheader("Citations")
+            for c in answer.get("citations",[]):
+                st.markdown(f"- **{c.get('source_title','unknown')}** - {c.get('meta','')}")
+                st.write(c.get("text","")[:600])
+
+# ----------------------------
+# Audio/Video Page
+# ----------------------------
+elif page == "Audio/Video":
+    st.header("Audio & Video Overviews")
+    st.write("Generate narrated audio or short explainer videos from notebook summaries.")
+    gen_type = st.selectbox("Type",["Audio Overview","Video Overview"])
+    target_source = st.text_input("Source ID (leave empty to summarize entire notebook)")
+    if st.button("Generate"):
+        from core.audio_video import generate_audio_overview, generate_video_overview
+        with st.spinner("Generating overview..."):
+            if gen_type == "Audio Overview":
+                out = generate_audio_overview(notebook_id=notebook_name, source_id=target_source or None)
+                st.success("Audio generated")
+                st.audio(out["file_path"])
+            else:
+                out = generate_video_overview(notebook_id=notebook_name, source_id=target_source or None)
+                st.success("Video generated")
+                st.video(out["file_path"])
+
+
+# ----------------------------
+# Insights Page: Auto notes and insight generator
+# ----------------------------
+
