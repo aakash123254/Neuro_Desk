@@ -174,3 +174,21 @@ elif page == "Insights":
 # ----------------------------
 # Knowledge Graph Page
 # ----------------------------
+elif page == "Knowledge Graph":
+    st.header("Knowledge Graph Visualization")
+    st.write("Visualize extracted entities and their relationships.")
+    if st.button("Build & Show Graph"):
+        from core.knowledge_graph import build_and_export_graph
+        graph_html_path = build_and_export_graph(notebook_id = notebook_name)
+        st.components.v1.html(open(graph_html_path, 'r').read(),height=700)
+        
+# ----------------------------
+# Settings Page
+# ----------------------------
+elif page == "Settings":
+    st.header("Settings")
+    st.write("Configurations and keys")
+    st.text("GEMINI_MODEL_TEXT: "+ str(GEMINI_MODEL_TEXT))
+    st.text("GEMINI_MODEL_PRO:"+ str(GEMINI_MODEL_PRO))
+    if st.button("Show Enviorment keys (SANITY)"):
+        st.write({k: os.getenv(k) for k in ["GEMINI_API_KEY"]if os.getenv(k)})
