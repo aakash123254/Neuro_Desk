@@ -158,4 +158,19 @@ elif page == "Audio/Video":
 # ----------------------------
 # Insights Page: Auto notes and insight generator
 # ----------------------------
+elif page == "Insights":
+    st.header("Auto Notes & Insights")
+    st.write("Generate autonmatic notes, key takeaways, and insight reports for the notebook.")
+    if st.button("Generate Insights"):
+        from core.insights import generate_insights
+        with st.spinner("Generating insights..."):
+            report = generate_insights(notebook_id=notebook_name)
+            st.subheader("Top Takeaways")
+            for r in report.get("takeaways",[]):
+                st.write(f" - {r}")
+            st.subheader("Longer Report")
+            st.write(report.get("report",""))
 
+# ----------------------------
+# Knowledge Graph Page
+# ----------------------------
