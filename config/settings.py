@@ -48,3 +48,27 @@ def configure_gemini():
     genai.configure(api_key=GEMINI_API_KEY)
     return True 
 
+# -----------------------------
+# 4. Global constants
+# -----------------------------
+
+CHUNKS_SIZE = 1000 # characters per text chunk 
+CHUNK_OVERLAP = 200 # OVERLAP BETWEEN CHUNKS 
+EMBED_MODEL = "models/embedding-001" # Gemini embeddings model 
+
+# -----------------------------
+# 5. Utility helpers
+# -----------------------------
+def get_model(model_type="text"):
+    """Return the correct Gemini model name."""
+    if model_type == "pro":
+        return GEMINI_MODEL_PRO 
+    return GEMINI_MODEL_TEXT 
+
+def sanity_check():
+    """Check if all required directories and keys exist."""
+    print("✅ Base directory:",BASE_DIR)
+    print("✅ Data directory:",DATA_DIR)
+    print("✅ Gemini key loaded:",bool(GEMINI_API_KEY))
+    print("✅ Default text model:",GEMINI_MODEL_TEXT)
+    print("✅ Default pro model:",GEMINI_MODEL_PRO)
